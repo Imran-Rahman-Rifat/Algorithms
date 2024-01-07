@@ -1,0 +1,85 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define pp pair<int,int>
+priority_queue<pair<int,pp>,vector<pair<int,pp>>,greater<pair<int,pp>>> graph;
+int parent[100];
+int rnk[100];
+void disjoint(int n)
+{
+
+    for(int i=0;i<=n;i++){
+        rnk[i]=0;
+        parent[i]=i;
+    }
+}
+int Find(int u)
+{
+    if(u != parent[u]) parent[u]=Find(parent[u]);
+    return parent[u];
+}
+void Merge(int x,int y)
+{
+    x=Find(x),y=Find(y);
+    if(rnk[x]>rnk[y]) parent[y]=x;
+    else parent[x]=y;
+    if(rnk[x]== rnk[y]) rnk[y]++;
+}
+void kruskal(int v)
+{
+    int mn=0;
+    disjoint(v);
+    while(!graph.empty()){
+        int u=graph.top().second.first;
+        int v=graph.top().second.second;
+
+        int su=Find(u);
+        int sv=Find(v);
+        if(su != sv){
+            cout<<u<<" -> "<<v<<endl;
+            mn+=graph.top().first;
+            Merge(su,sv);
+
+        }
+        graph.pop();
+    }
+    cout<<endl;
+    cout<<"The total cost of Minimal spanning tree is = "<<mn<<endl;
+
+
+}
+int main()
+{
+    int v,e;
+    cin>>v>>e;
+
+    for(int i=0;i<e;i++){
+        int x,y,cost;
+        cin>>x>>y>>cost;
+        graph.push(make_pair(cost,make_pair(x,y)));
+    }
+    /*while(!graph.empty()){
+        cout<<graph.top().first<<" "<<graph.top().second.first<<" "<<graph.top().second.second;
+        graph.pop();
+        cout<<endl;
+    }*/
+    cout<<endl;
+    kruskal(v);
+
+}
+/*
+9 14
+0 1 4
+0 7 8
+1 2 8
+1 7 11
+2 3 7
+2 8 2
+2 5 4
+3 4 9
+3 5 14
+4 5 10
+5 6 2
+6 7 1
+6 8 6
+7 8 7
+*/
