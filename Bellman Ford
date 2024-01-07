@@ -1,0 +1,93 @@
+#include<bits/stdc++.h>
+using namespace std;
+int dis[9999];
+int path[9999];
+
+bool BellmanFord_algo(vector<pair<pair<int, int>, int>> edges, int source, int v, int e) {
+    for (int i = 0; i < v; i++) {
+        dis[i] = INT_MAX;
+    }
+
+    dis[source] = 0;
+
+    for (int i = 0; i < v - 1; i++) {
+        for (int j = 0; j < e; j++) {
+            int x = edges[j].first.first;
+            int y = edges[j].first.second;
+            int cost = edges[j].second;
+
+            if (dis[x] != INT_MAX && dis[y] > dis[x] + cost) {
+                dis[y] = dis[x] + cost;
+                path[y]=x;
+            }
+        }
+    }
+
+    // Check for negative weight cycle
+    for (int j = 0; j < e; j++) {
+        int x = edges[j].first.first;
+        int y = edges[j].first.second;
+        int cost = edges[j].second;
+
+        if (dis[x] != INT_MAX && dis[y] > dis[x] + cost) {
+            // Negative weight cycle found
+            return false;
+        }
+    }
+
+    for (int i = 0; i < v; i++)
+        cout<<"The total cost "<<source<<" to "<<i<<" is  = "<<dis[i]<<endl;
+
+    return true;
+}
+void print_path(int source,int des)
+{
+    if(source==des) cout<<source<<" ";
+    else if(dis[des]==INT_MAX){
+        cout<<"No path exit";
+    }
+    else{
+        print_path(source,path[des]);
+        cout<<des<<" ";
+
+    }
+
+}
+
+int main() {
+    int v, e, x, y, cost,flag=0;
+    cin >> v >> e;
+
+    vector<pair<pair<int, int>, int>> edges;
+
+    for (int i = 0; i < e; i++) {
+        cin >> x >> y >> cost;
+        edges.push_back(make_pair(make_pair(x, y), cost));
+        // edges.push_back(make_pair(make_pair(y, x), cost));
+    }
+    int source=0;
+    if (!BellmanFord_algo(edges,source, v, e)) {
+            flag=1;
+        cout << "Negative weight cycle detected!" << endl;
+    }
+    if(flag==0){
+            cout<<endl;
+         for(int i=0;i<v;i++){
+         cout<<"Path from "<<source<<" to "<<i<<" is = ";
+        print_path(source,i);
+        cout<<endl;
+    }
+    }
+
+    return 0;
+}
+
+/*
+4 6
+0 1 2
+0 2 2
+1 3 4
+2 1 1
+2 3 7
+3 0 3
+*/
